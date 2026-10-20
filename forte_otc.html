@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>FORTE OTC — Market Signal Analyzer</title>
+<style>
+:root{color-scheme:dark;--bg:#080d19;--panel:#10182a;--panel2:#151f34;--line:#26344d;--text:#eef4ff;--muted:#91a2bd;--cyan:#55d6be;--blue:#7aa7ff;--red:#ff7188;--amber:#ffc66d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#14213b 0,#080d19 55%);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text);min-height:100vh}
+.wrap{max-width:1050px;margin:auto;padding:22px 16px 42px}.top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#55d6be,#4f83ff);display:grid;place-items:center;color:#07101e;font-weight:950;font-size:23px;box-shadow:0 8px 26px #55d6be25}.brand h1{font-size:22px;letter-spacing:2px;margin:0}.brand p{margin:3px 0 0;color:var(--muted);font-size:12px;letter-spacing:1.5px}.pill{border:1px solid var(--line);background:#111a2b;padding:8px 11px;border-radius:999px;color:var(--muted);font-size:12px;white-space:nowrap}
+.hero{padding:24px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(135deg,#121e34dd,#0d1424f2);box-shadow:0 20px 60px #0003}.hero h2{font-size:clamp(23px,4vw,34px);margin:0 0 9px}.hero p{color:var(--muted);margin:0;line-height:1.6;max-width:760px}
+.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:16px}.card{border:1px solid var(--line);border-radius:18px;background:#10182aee;padding:19px;min-width:0}.card h3{font-size:15px;margin:0 0 15px;letter-spacing:.3px}.controls{display:flex;flex-wrap:wrap;gap:8px}.tf{border:1px solid var(--line);border-radius:11px;padding:10px 15px;background:#0b1323;color:var(--muted);font-weight:700;cursor:pointer}.tf.active{border-color:var(--cyan);color:var(--cyan);background:#12302e}.field{margin-top:15px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:7px}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:#0a1221;color:var(--text);padding:12px;border-radius:11px;font:inherit;outline:none}.field textarea{min-height:150px;resize:vertical;font:12px ui-monospace,SFMono-Regular,Consolas,monospace;line-height:1.55}.hint{font-size:12px;color:var(--muted);line-height:1.55;margin-top:8px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.btn{border:0;border-radius:12px;padding:12px 17px;font-weight:800;cursor:pointer}.primary{background:linear-gradient(135deg,var(--cyan),#77e8d4);color:#07151b;flex:1}.secondary{background:#1a2942;color:var(--text);border:1px solid var(--line)}.btn:active{transform:scale(.99)}
+.result{display:flex;flex-direction:column;min-height:100%}.status{font-size:11px;letter-spacing:1.2px;color:var(--muted);text-transform:uppercase}.signal{font-size:32px;font-weight:900;margin:10px 0 5px}.signal.neutral{color:var(--amber)}.signal.up{color:var(--cyan)}.signal.down{color:var(--red)}.sub{font-size:13px;color:var(--muted);line-height:1.5}.pairrow{display:flex;align-items:center;gap:9px;margin-top:19px}.pair{font-size:19px;font-weight:800;overflow-wrap:anywhere}.copy{border:1px solid var(--line);background:#1a2942;color:var(--text);border-radius:9px;padding:8px 10px;cursor:pointer}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}.metric{padding:13px;border:1px solid var(--line);background:#0c1424;border-radius:12px}.metric span{display:block;font-size:11px;color:var(--muted);margin-bottom:7px}.metric strong{font-size:20px}.riskhead{display:flex;justify-content:space-between;align-items:center;margin:20px 0 9px}.riskhead span{font-size:12px;color:var(--muted)}.bar{height:9px;border-radius:20px;background:#26344d;overflow:hidden}.barfill{height:100%;width:0%;background:var(--cyan);border-radius:20px;transition:width .3s}.warning{font-size:12px;line-height:1.55;padding:12px;border-radius:11px;background:#241e17;border:1px solid #59452b;color:#f4d5a2;margin-top:16px}.smalltitle{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:18px 0 9px}.checks{display:grid;grid-template-columns:1fr 1fr;gap:9px}.check{border:1px solid var(--line);border-radius:10px;padding:10px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}.check b{color:var(--text);font-weight:700}.footer{color:#72839e;font-size:11px;text-align:center;margin:20px 0 0;line-height:1.6}.hidden{display:none}.notice{margin-top:16px;padding:13px;border-radius:12px;background:#17243a;border:1px solid #2c4264;color:#c7d8f3;font-size:12px;line-height:1.6}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.top{align-items:flex-start}.pill{white-space:normal;text-align:center}.hero{padding:20px}.card{padding:16px}.wrap{padding:16px 12px 30px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo">F</div><div><h1>FORTE OTC</h1><p>MARKET SIGNAL ANALYZER</p></div></div>
+    <div class="pill">● Без доступу до акаунта</div>
+  </header>
+  <section class="hero">
+    <h2>Одна найкраща можливість. Без зайвого шуму.</h2>
+    <p>Аналіз Price Action, RSI, MACD, Bollinger Bands, ATR і структури ринку. Завантаж реальні свічки OTC, щоб отримати розрахований сигнал. Бот не відкриває угоди та не підключається до твого Pocket Option.</p>
+  </section>
+  <div class="grid">
+    <section class="card">
+      <h3>01 / Налаштування аналізу</h3>
+      <div class="smalltitle">Тривалість угоди</div>
+      <div class="controls" id="tfControls">
+        <button class="tf active" data-tf="1">1 хв</button><button class="tf" data-tf="5">5 хв</button><button class="tf" data-tf="10">10 хв</button>
+      </div>
+      <div class="field">
+        <label for="pair">Валютна пара у завантажених даних</label>
+        <input id="pair" placeholder="Наприклад: EUR/USD OTC" value="EUR/USD OTC">
+      </div>
+      <div class="field">
+        <label for="candles">Свічки OHLC — від старих до нових</label>
+        <textarea id="candles" spellcheck="false" placeholder="timestamp,open,high,low,close&#10;2026-10-20 14:00,1.1650,1.1660,1.1645,1.1657&#10;2026-10-20 14:01,1.1657,1.1664,1.1652,1.1661"></textarea>
+        <div class="hint">Встав CSV з колонками <b>timestamp,open,high,low,close</b> (мінімум 60 свічок). Дані мають бути з потрібної OTC-пари та відповідного таймфрейму. Не використовуй приклади чи вигадані котирування для реальної торгівлі.</div>
+      </div>
+      <div class="actions"><button class="btn primary" id="analyze">АНАЛІЗУВАТИ РИНОК</button><button class="btn secondary" id="clear">Очистити</button></div>
+      <div class="notice"><b>Звідки взяти дані?</b> Використай експорт історії котирувань, якщо він доступний у твоєму джерелі, або інший законний спосіб отримання OHLC. Публічні біржові API зазвичай не містять саме Pocket Option OTC-котирувань, тому їх не можна автоматично підміняти.</div>
+    </section>
+    <section class="card result">
+      <div class="status" id="status">Очікує реальні свічки</div>
+      <div class="signal neutral" id="direction">НЕМАЄ СИГНАЛУ</div>
+      <div class="sub" id="summary">Встав дані OTC та натисни «Аналізувати ринок». Без реальних котирувань сигнал не генерується.</div>
+      <div class="pairrow"><div class="pair" id="pairOut">—</div><button class="copy" id="copyPair">Копіювати</button></div>
+      <div class="metrics">
+        <div class="metric"><span>Оцінка сигналу</span><strong id="confidence">—</strong></div>
+        <div class="metric"><span>Таймфрейм</span><strong id="duration">1 хв</strong></div>
+      </div>
+      <div class="riskhead"><span>РИЗИК / НЕСТАБІЛЬНІСТЬ</span><strong id="riskNum">— / 100</strong></div>
+      <div class="bar"><div class="barfill" id="riskBar"></div></div>
+      <div class="sub" id="riskText" style="margin-top:8px">Ризик буде оцінено за волатильністю та якістю даних.</div>
+      <div class="smalltitle">Перевірки стратегії</div>
+      <div class="checks">
+        <div class="check"><span>RSI (14)</span><b id="rsi">—</b></div>
+        <div class="check"><span>MACD (12,26,9)</span><b id="macd">—</b></div>
+        <div class="check"><span>Bollinger (20,2)</span><b id="bb">—</b></div>
+        <div class="check"><span>ATR (14)</span><b id="atr">—</b></div>
+        <div class="check"><span>Price Action</span><b id="pa">—</b></div>
+        <div class="check"><span>Напрямок M5*</span><b id="trend">—</b></div>
+      </div>
+      <div class="warning" id="caveat">Сигнали є оцінкою технічних умов, а не гарантією результату. На OTC рух ціни може відрізнятися від відкритих біржових ринків.</div>
+    </section>
+  </div>
+  <p class="footer">FORTE OTC • Незалежний аналітичний інструмент • Не є офіційним продуктом Pocket Option.<br>*Напрямок M5 оцінюється лише якщо завантажений набір свічок справді має інтервал 5 хвилин.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let tf=1;
+document.querySelectorAll('.tf').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tf').forEach(x=>x.classList.remove('active'));b.classList.add('active');tf=Number(b.dataset.tf);$('duration').textContent=tf+' хв';}));
+function fmt(v,n=4){return Number.isFinite(v)?v.toFixed(n):'—'}
+function mean(a){return a.reduce((s,v)=>s+v,0)/a.length}
+function ema(a,p){let k=2/(p+1),out=[],v=a[0];for(let i=0;i<a.length;i++){v=i===0?a[0]:a[i]*k+v*(1-k);out.push(v)}return out}
+function rsiCalc(c,p=14){let g=0,l=0;for(let i=c.length-p;i<c.length;i++){let d=c[i]-c[i-1];if(d>0)g+=d;else l-=d}g/=p;l/=p;return l===0?100:100-100/(1+g/l)}
+function parseCSV(raw){
+ const lines=raw.trim().split(/\r?\n/).filter(x=>x.trim());if(lines.length<3)throw Error('Додай CSV зі свічками. Для індикаторів потрібно щонайменше 60 свічок.');
+ const first=lines[0].toLowerCase(),hasHeader=/open/.test(first)&&/close/.test(first),start=hasHeader?1:0;
+ let out=[];
+ for(let i=start;i<lines.length;i++){
+  const cols=lines[i].split(/[,\t;]+/).map(s=>s.trim().replace(/^"|"$/g,''));
+  if(cols.length<5)continue;
+  let vals=cols.slice(-4).map(v=>Number(v));
+  if(vals.some(v=>!Number.isFinite(v)))continue;
+  let [o,h,l,c]=vals;
+  if(h<Math.max(o,c,l)||l>Math.min(o,c,h)||[o,h,l,c].some(v=>v<=0))continue;
+  out.push({t:cols.slice(0,cols.length-4).join(' '),o,h,l,c});
+ }
+ if(out.length<60)throw Error('Після перевірки знайдено лише '+out.length+' коректних свічок. Потрібно щонайменше 60 рядків OHLC.');
+ return out;
+}
+function analyze(){
+ try{
+  const d=parseCSV($('candles').value),c=d.map(x=>x.c),last=d[d.length-1],prev=d[d.length-2];
+  const rsi=rsiCalc(c),e12=ema(c,12),e26=ema(c,26),macdLine=e12.map((v,i)=>v-e26[i]),sig=ema(macdLine,9),hist=macdLine.map((v,i)=>v-sig[i]);
+  const n=20,window=c.slice(-n),mid=mean(window),sd=Math.sqrt(mean(window.map(x=>(x-mid)**2))),upper=mid+2*sd,lower=mid-2*sd;
+  let trs=[];for(let i=1;i<d.length;i++)trs.push(Math.max(d[i].h-d[i].l,Math.abs(d[i].h-d[i-1].c),Math.abs(d[i].l-d[i-1].c)));
+  const atr=mean(trs.slice(-14)),atrPct=atr/last.c*100,rangePct=(last.h-last.l)/last.c*100;
+  const recent=d.slice(-20),res=Math.max(...recent.slice(0,-1).map(x=>x.h)),sup=Math.min(...recent.slice(0,-1).map(x=>x.l));
+  const bull=last.c>last.o,bear=last.c<last.o,body=Math.abs(last.c-last.o),range=Math.max(last.h-last.l,1e-12),lowerW=Math.min(last.o,last.c)-last.l,upperW=last.h-Math.max(last.o,last.c);
+  let pa=0,paText='Нейтрально';
+  if(last.c>res){pa+=1;paText='Пробій угору'} else if(last.c<sup){pa-=1;paText='Пробій униз'}
+  else if(last.l<=sup+atr*.18&&bull&&lowerW>body*.7){pa+=1;paText='Можливий відскок від підтримки'}
+  else if(last.h>=res-atr*.18&&bear&&upperW>body*.7){pa-=1;paText='Можливий відскок від опору'}
+  else if(bull&&body/range>.65){pa+=.5;paText='Сильна бичача свічка'}else if(bear&&body/range>.65){pa-=.5;paText='Сильна ведмежа свічка'}
+  let score=0,checks=[];
+  const trend=e12.at(-1)>e26.at(-1)?1:-1;score+=trend;checks.push(trend);
+  const mom=hist.at(-1)>0&&hist.at(-1)>hist.at(-2)?1:(hist.at(-1)<0&&hist.at(-1)<hist.at(-2)?-1:0);score+=mom;checks.push(mom);
+  const r=rsi>53&&rsi<72?1:(rsi<47&&rsi>28?-1:0);score+=r;checks.push(r);
+  score+=pa;checks.push(pa);
+  const bbPos=(last.c-lower)/(upper-lower||1);let bbText=bbPos>.9?'Біля верхньої':bbPos<.1?'Біля нижньої':'Усередині';
+  if(bbPos>.98&&bear)score-=.5;if(bbPos<.02&&bull)score+=.5;
+  let risk=Math.round(Math.min(100,Math.max(5,18+atrPct*180+rangePct*110+(bbPos>.94||bbPos<.06?8:0)+(Math.abs(hist.at(-1)-hist.at(-2))/(atr||1)*15))));
+  const strength=Math.round(Math.min(95,Math.max(5,50+Math.abs(score)*11-(risk>65?10:0))));
+  const direction=score>=2?'up':score<=-2?'down':'neutral';
+  $('status').textContent='Проаналізовано '+d.length+' свічок';
+  $('direction').textContent=direction==='up'?'ВГОРУ ↑':direction==='down'?'ВНИЗ ↓':'НЕМАЄ СИЛЬНОГО СИГНАЛУ';
+  $('direction').className='signal '+direction;
+  $('summary').textContent=direction==='neutral'?'Індикатори не дають достатньо узгодженого напрямку. Краще пропустити угоду.':(risk>=65?'Є напрямок, але ризик високий — сигнал відхилено як небезпечний.':'Напрямок визначено за комбінацією індикаторів. Це не гарантія успіху.');
+  if(risk>=65){$('direction').textContent='КРАЩЕ НЕ ТОРГУВАТИ';$('direction').className='signal neutral';}
+  $('pairOut').textContent=$('pair').value.trim()||'Пара не вказана';
+  $('confidence').textContent=(direction==='neutral'||risk>=65?'—':strength+'/100');
+  $('riskNum').textContent=risk+' / 100';$('riskBar').style.width=risk+'%';$('riskBar').style.background=risk>=65?'var(--red)':risk>=40?'var(--amber)':'var(--cyan)';
+  $('riskText').textContent=risk>=65?'Високий ризик: сильні коливання або нестабільні умови. Пропусти угоду.':risk>=40?'Середній ризик: потрібна особлива обережність.':'Низький відносний ризик за цими свічками — це не означає, що угода безпечна.';
+  $('rsi').textContent=fmt(rsi,1);$('macd').textContent=hist.at(-1)>0?'Позитивний':hist.at(-1)<0?'Негативний':'Нейтральний';$('bb').textContent=bbText;$('atr').textContent=fmt(atr,6)+' ('+fmt(atrPct,3)+'%)';$('pa').textContent=paText;$('trend').textContent=trend>0?'Угору':'Вниз';
+  $('caveat').textContent='Остання свічка: '+(last.t||'час не вказано')+'. Розрахунок зроблено на введених даних; перевіряй, що вони свіжі, належать потрібній OTC-парі та правильному інтервалу. Результат не підтверджений форвард-тестом.';
+ }catch(e){$('status').textContent='Потрібні коректні дані';$('direction').textContent='НЕМАЄ СИГНАЛУ';$('direction').className='signal neutral';$('summary').textContent=e.message;}
+}
+$('analyze').addEventListener('click',analyze);
+$('clear').addEventListener('click',()=>{$('candles').value='';$('status').textContent='Очікує реальні свічки';$('direction').textContent='НЕМАЄ СИГНАЛУ';$('direction').className='signal neutral';$('summary').textContent='Встав дані OTC та натисни «Аналізувати ринок». Без реальних котирувань сигнал не генерується.';$('pairOut').textContent='—';$('confidence').textContent='—';$('riskNum').textContent='— / 100';$('riskBar').style.width='0%';['rsi','macd','bb','atr','pa','trend'].forEach(id=>$(id).textContent='—');});
+$('copyPair').addEventListener('click',async()=>{const t=$('pairOut').textContent;if(!t||t==='—')return;try{await navigator.clipboard.writeText(t);$('copyPair').textContent='Скопійовано ✓';setTimeout(()=>$('copyPair').textContent='Копіювати',1300)}catch(e){const x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();document.execCommand('copy');x.remove();$('copyPair').textContent='Скопійовано ✓';setTimeout(()=>$('copyPair').textContent='Копіювати',1300)}});
+</script>
+</body>
+</html>
